@@ -65,5 +65,5 @@ def find_faces(img, stride, thresh, params, orientations, wrap180):
                 outimg[row:row + windowsize, col] = 255
                 outimg[row:row + windowsize, col + windowsize - 1] = 255
         windowsize = math.ceil(windowsize * 1.2)
-        stride = windowsize * stride_over_windowsize
-    return outimg
+        stride = math.ceil(windowsize * stride_over_windowsize)
+    return outimg, probmap
