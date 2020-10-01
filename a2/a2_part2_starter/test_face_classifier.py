@@ -31,9 +31,11 @@ def test_face_classifier(ntrain, ntest, orientations, wrap180):
     # Get some test data
     tdescriptors, tclasses = get_testing_data(ntest, orientations, wrap180)
 
-    # Evaluate the classifier on the test data
+    # Evaluate the classifier on the test datals
     tpredicted = logistic_prob(tdescriptors, params)
+
     plot_errors(tpredicted, tclasses, 'Performance on test set for varying threshold', 2)
+    #np.savez('face_classifier.npz', params=params, orientations=orientations, wrap180=wrap180)
 
 
 def plot_errors(predicted, classes, name, num):
