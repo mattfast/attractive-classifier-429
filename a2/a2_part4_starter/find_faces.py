@@ -28,6 +28,8 @@ def find_faces(img, stride, thresh, params, orientations, wrap180):
     if stride > windowsize:
         stride = windowsize
 
+    stride_over_windowsize = float(stride) / windowsize
+
     hog_descriptor_size = 100 * orientations
     height, width = img.shape
     probmap = np.zeros([height, width])
@@ -63,5 +65,5 @@ def find_faces(img, stride, thresh, params, orientations, wrap180):
                 outimg[row:row + windowsize, col] = 255
                 outimg[row:row + windowsize, col + windowsize - 1] = 255
         windowsize = math.ceil(windowsize * 1.2)
-        stride = math.ceil(stride * 1.2)
+        stride = windowsize * stride_over_windowsize
     return outimg
