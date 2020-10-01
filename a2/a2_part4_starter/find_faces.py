@@ -43,7 +43,7 @@ def find_faces(img, stride, thresh, params, orientations, wrap180):
 
                 crop = cv2.resize(crop, (36, 36))
                 face_descriptor = hog36(crop, orientations, wrap180)
-                descriptors[0, 0] = 1
+                descriptors[:, 0] = 1
                 descriptors[0, 1:] = face_descriptor
 
                 probability = logistic_prob(descriptors, params)[0]
