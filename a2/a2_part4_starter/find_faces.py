@@ -5,7 +5,7 @@ import numpy as np
 import cv2
 import math
 from hog36 import hog36
-from find_faces_single_scale import find_faces_single_scale
+# from find_faces_single_scale import find_faces_single_scale
 from logistic_prob import logistic_prob
 
 def find_faces(img, stride, thresh, params, orientations, wrap180):
