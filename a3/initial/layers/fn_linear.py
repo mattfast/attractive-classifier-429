@@ -48,8 +48,8 @@ def fn_linear(input, params, hyper_params, backprop, dv_output=None):
 
         # TODO: BACKPROP CODE
         #       Update dv_input and grad with values
-        dv_input = W @ dv_output # W is dy/dx
-        grad['W'] = x @ dv_output
+        dv_input = dv_output @ W # W is dy/dx
+        grad['W'] = dv_output @ input
         grad['b'] = dv_output
 
 
