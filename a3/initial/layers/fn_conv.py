@@ -32,10 +32,12 @@ def fn_conv(input, params, hyper_params, backprop, dv_output=None):
     dv_input = np.zeros(0)
     grad = {'W': np.zeros(0),
             'b': np.zeros(0)}
-    
-    # TODO: FORWARD CODE
-    #       Update output with values
 
+    for i in range(batch_size):
+        for j in range(num_filters):
+            img = input[:,:,:,i]
+            filter = params['W'][:,:,:,j]
+            output[:,:,j,i] = scipy.signal.convolve(img, filter, mode='valid')
 
 
 
