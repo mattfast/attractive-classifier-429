@@ -17,6 +17,8 @@ def update_weights(model, grads, hyper_params):
     lmd = hyper_params["weight_decay"]
     updated_model = model
 
+    
+
     # TODO: Update the weights of each layer in your model based on the calculated gradients
 
     return updated_model

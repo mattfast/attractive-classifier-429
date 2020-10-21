@@ -17,7 +17,8 @@ def inference(model, input):
 
     for i in range(num_layers):
         curr_layer = model['layers'][i]
-        activations[i], _, _ = curr_layer['fwd_fn'](input, curr_layer['params'], curr_layer['hyper_params'], backprop=False)
+        activations[i], _, _ = curr_layer['fwd_fn'](input, curr_layer['params'], curr_layer['hyper_params'],
+                                                    backprop=False)
         input = activations[i]
 
     output = activations[-1]
