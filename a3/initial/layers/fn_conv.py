@@ -38,6 +38,7 @@ def fn_conv(input, params, hyper_params, backprop, dv_output=None):
             img = input[:,:,:,i]
             filter = params['W'][:,:,:,j]
             output[:,:,j,i] = scipy.signal.convolve(img, filter, mode='valid')
+            output[:,:,j,i] += params['b'][j, 1]
 
 
 
@@ -49,7 +50,5 @@ def fn_conv(input, params, hyper_params, backprop, dv_output=None):
         
         # TODO: BACKPROP CODE
         #       Update dv_input and grad with values
-
-
 
     return output, dv_input, grad
