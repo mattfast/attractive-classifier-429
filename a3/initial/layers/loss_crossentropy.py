@@ -15,19 +15,18 @@ def loss_crossentropy(input, labels, hyper_params, backprop):
 
     assert labels.max() <= input.shape[0]
     loss = 0
-
-    # TODO: CALCULATE LOSS
-
+    num_inputs = input.shape[-1]
+    labels = labels.astype('int')
+    for i in range(num_inputs):
+        curr_label = labels[i]
+        loss += -np.log(input[curr_label, i])/num_inputs
 
     eps = 0.00001
     dv_input = np.zeros(0)
     if backprop:
         dv_input = np.zeros(input.shape)
-        
-        # TODO: BACKPROP CODE
-        #       Add a small eps to the denominator to avoid numerical instability
-
-
-
+        for i in range(num_inputs):
+            curr_label = labels[i]
+            dv_input[curr_label, i] = -1/(input[curr_label, i] + eps)
 
     return loss, dv_input
