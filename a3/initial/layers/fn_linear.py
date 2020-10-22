@@ -48,10 +48,8 @@ def fn_linear(input, params, hyper_params, backprop, dv_output=None):
 
         # TODO: BACKPROP CODE
         #       Update dv_input and grad with values
-        dv_input = W.transpose() @ dv_output # W transpose is dy/dx
-        grad['W'] = dv_output @ input.transpose() / batch_size
-        grad['b'] = dv_output
-
-
+        dv_input = W.transpose() @ dv_output # W transpose is dy/dx. Left multiplication to match input dimensions
+        grad['W'] = dv_output @ input.transpose() / batch_size # Right multiplication to match W dimensions
+        grad['b'][:, 0] = np.sum(dv_output, axis=1) / batch_size
 
     return output, dv_input, grad
