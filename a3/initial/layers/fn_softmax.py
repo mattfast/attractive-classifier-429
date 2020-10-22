@@ -47,7 +47,7 @@ def fn_softmax(input, params, hyper_params, backprop, dv_output=None):
                     else:
                         dy_dx[i, j] = - output[i, k] * output[j, k]
 
-            dv_input[:, k] = dy_dx @ dv_output
+            dv_input[:, k] = dy_dx @ dv_output[:, k]
 
 
     return output, dv_input, grad
