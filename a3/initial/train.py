@@ -73,14 +73,17 @@ def train(model, input, label, params, numIters):
     for i in range(numIters):
         batch = np.random.choice(num_inputs, batch_size, replace=False)
         train_inputs = input[..., batch]
-        train_labels = label[batch]
+        train_labels = label[batch].astype('int')
 
         output, activations = inference(model, train_inputs)
         curr_loss, dv_output = loss_crossentropy(output, train_labels, hyper_params=None, backprop=True)
         loss[i] = curr_loss
         curr_grads = calc_gradient(model, train_inputs, activations, dv_output)
 
-        # TODO: calculate accuracy
+        # Calculate accuracy
+        max_values = np.argmax(output, axis=0)
+        assert len(max_values) == len(train_labels) # Should be equal in size
+        accuracy = np.sum(np.equal(max_values, train_labels)) / len(max_values)
 
         for j in range(num_layers):
             velocity[j]['W'] = (rho*velocity[j]['W'] + curr_grads[j]['W'])
@@ -89,6 +92,7 @@ def train(model, input, label, params, numIters):
         # Passing in velocity for gradient accomplishes the same update step for momentum
         model = update_weights(model, velocity, update_params)
         print(f"Current loss on {i}th iteration: {curr_loss}.")
+        print(f"Current accuracy on {i}th iteration: {accuracy}.")
 
         print("Saving model...")
         np.savez(save_file, **model)
@@ -106,4 +110,8 @@ def train(model, input, label, params, numIters):
         #   (2) Save your learnt model, using ``np.savez(save_file, **model)``
     np.savez(save_file, **model)
     return model, loss
+
+response = np.array([1,1,3])
+response2 = np.array([1,1,2])
+print(np.sum(np.equal(response2, response)))
 
