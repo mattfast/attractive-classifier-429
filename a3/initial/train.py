@@ -88,7 +88,11 @@ def train(model, input, label, params, numIters):
 
         # Passing in velocity for gradient accomplishes the same update step for momentum
         model = update_weights(model, velocity, update_params)
-        print(f"Current loss on {i}th iteration: {curr_loss}")
+        print(f"Current loss on {i}th iteration: {curr_loss}.")
+
+        print("Saving model...")
+        np.savez(save_file, **model)
+        print("Model Saved.")
 
         # Calculate and store Velocity
         # Steps:
