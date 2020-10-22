@@ -50,6 +50,8 @@ def train(model, input, label, params, numIters):
     rho = params.get("rho", .9)
     # Batch size
     batch_size = params.get("batch_size", 128)
+    plateau_iteration_cutoff = 25
+    plateau_ratio_cutoff = 0.99
 
     # There is a good chance you will want to save your network model during/after
     # training. It is up to you where you save and how often you choose to back up
@@ -63,22 +65,25 @@ def train(model, input, label, params, numIters):
                      "rho": rho}
     
     num_inputs = input.shape[-1]
-    loss = np.zeros((numIters,))
+    loss = np.zeros((0,))
     num_layers = len(model["layers"])
     velocity = [None,] * num_layers
     for i in range(num_layers):
         velocity[i]['W'] = np.zeros(model['layers'][i]['params']['W'].shape)
         velocity[i]['b'] = np.zeros(model['layers'][i]['params']['b'].shape)
 
-    for i in range(numIters):
+    curr_best_loss = -1
+    num_iterations_since_best = 0
+    iteration_count = 1
+    while True:
         batch = np.random.choice(num_inputs, batch_size, replace=False)
         train_inputs = input[..., batch]
         train_labels = label[batch].astype('int')
 
         output, activations = inference(model, train_inputs)
         curr_loss, dv_output = loss_crossentropy(output, train_labels, hyper_params=None, backprop=True)
-        loss[i] = curr_loss
         curr_grads = calc_gradient(model, train_inputs, activations, dv_output)
+        loss = np.append(loss, curr_loss)
 
         # Calculate accuracy
         max_values = np.argmax(output, axis=0)
@@ -91,12 +96,30 @@ def train(model, input, label, params, numIters):
 
         # Passing in velocity for gradient accomplishes the same update step for momentum
         model = update_weights(model, velocity, update_params)
-        print(f"Current loss on {i}th iteration: {curr_loss}.")
-        print(f"Current accuracy on {i}th iteration: {accuracy}.")
+        print(f"Current loss on {iteration_count}th iteration: {curr_loss}.")
+        print(f"Current accuracy on {iteration_count}th iteration: {accuracy}.")
 
-        print("Saving model...")
-        np.savez(save_file, **model)
-        print("Model Saved.")
+        plateau_ratio = 1
+
+        if curr_best_loss == -1:
+            plateau_ratio = 0
+        elif curr_loss < curr_best_loss:
+            plateau_ratio = curr_loss / curr_best_loss
+
+        if plateau_ratio < plateau_ratio_cutoff:
+            curr_best_loss = curr_loss
+            num_iterations_since_best = 0
+
+            print("Saving model...")
+            np.savez(save_file, **model)
+            print("Model Saved.")
+        else:
+            num_iterations_since_best += 1
+
+        if num_iterations_since_best > plateau_iteration_cutoff:
+            break
+
+        iteration_count += 1
 
         # Calculate and store Velocity
         # Steps:
@@ -110,8 +133,4 @@ def train(model, input, label, params, numIters):
         #   (2) Save your learnt model, using ``np.savez(save_file, **model)``
     np.savez(save_file, **model)
     return model, loss
-
-response = np.array([1,1,3])
-response2 = np.array([1,1,2])
-print(np.sum(np.equal(response2, response)))
 
