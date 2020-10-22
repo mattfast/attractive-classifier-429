@@ -80,6 +80,8 @@ def train(model, input, label, params, numIters):
         loss[i] = curr_loss
         curr_grads = calc_gradient(model, train_inputs, activations, dv_output)
 
+        # TODO: calculate accuracy
+
         for j in range(num_layers):
             velocity[j]['W'] = (rho*velocity[j]['W'] + curr_grads[j]['W'])
             velocity[j]['b'] = (rho*velocity[j]['b'] + curr_grads[j]['b'])
