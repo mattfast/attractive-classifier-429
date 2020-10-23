@@ -43,7 +43,7 @@ def train(model, input, label, params, numIters):
     '''
     # Initialize training parameters
     # Learning rate
-    lr = params.get("learning_rate", .05)
+    lr = params.get("learning_rate", .02)
     # Weight decay
     wd = params.get("weight_decay", .00005)
     # Friction term
@@ -117,7 +117,7 @@ def train(model, input, label, params, numIters):
         print(f"Current training loss on {i}th iteration: {curr_loss}.")
         print(f"Current training accuracy on {i}th iteration: {train_accuracy}.")
 
-        lr = lr * 0.99
+        lr = lr * 0.985
         update_params['lr'] = lr
 
         # Calculate Test Loss on mini-Batch
