@@ -45,7 +45,7 @@ def train(model, input, label, params, numIters):
     # Learning rate
     lr = params.get("learning_rate", .02)
     # Weight decay
-    wd = params.get("weight_decay", .00005)
+    wd = params.get("weight_decay", .0005)
     # Friction term
     rho = params.get("rho", .99)
     # Batch size
@@ -113,7 +113,7 @@ def train(model, input, label, params, numIters):
             velocity[j] = new_velocity
 
         # Passing in velocity for gradient accomplishes the same update step for momentum
-        model = update_weights(model, velocity, update_params)
+        model = update_weights(model, curr_grads, update_params)
         print(f"Current training loss on {i}th iteration: {curr_loss}.")
         print(f"Current training accuracy on {i}th iteration: {train_accuracy}.")
 
