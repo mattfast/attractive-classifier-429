@@ -65,4 +65,3 @@ def init_model(layers, input_size, output_size, display):
         assert list(network_output_size) == list(output_size), 'Network output does not match up with provided output size'
 
     return model
-
