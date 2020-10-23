@@ -15,7 +15,7 @@ def calc_gradient(model, input, layer_acts, dv_output):
         grads:  A list of gradients of each layer in model["layers"]
     '''
     num_layers = len(model["layers"])
-    grads = [None,] * num_layers
+    grads = [{}] * num_layers
 
     for i in range(num_layers-1, -1, -1):
         curr_layer = model["layers"][i]
@@ -23,8 +23,9 @@ def calc_gradient(model, input, layer_acts, dv_output):
         if i > 0:
             curr_input = layer_acts[i-1]
 
-        _, dv_output, grads[i] = curr_layer['fwd_fn'](curr_input, curr_layer['params'], curr_layer['hyper_params'],
+        _, dv_output, gradient = curr_layer['fwd_fn'](curr_input, curr_layer['params'], curr_layer['hyper_params'],
                                                            backprop=True, dv_output=dv_output)
+        grads[i] = gradient
 
     return grads
 
