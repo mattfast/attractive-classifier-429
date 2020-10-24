@@ -156,6 +156,7 @@ def check_layers():
 
     out_, dv_in_, grad_ = fn_conv_(inp, params, hyper, True, dv)
 
+
     # compare normal
     err_out = mse(out, out_)
     # compare flipped
@@ -193,6 +194,7 @@ def check_layers():
         err_dv = mse(dv_in, dv_in_)
         # compare flipped
         err_dv_fl = mse(dv_in_fl, dv_in_)
+
         print('\tBackpropagated error: %s' % pass_fail((err_dv if noflip else err_dv_fl) < err_thresh))
 
 

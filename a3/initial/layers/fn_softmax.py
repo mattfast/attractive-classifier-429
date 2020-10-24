@@ -16,7 +16,7 @@ def fn_softmax(input, params, hyper_params, backprop, dv_output=None):
     """
 
     num_nodes, batch_size = input.shape
-    exp_input = np.exp(input)
+    #exp_input = np.exp(input)
 
     # Initialize
     output = np.zeros([num_nodes, batch_size])
@@ -29,7 +29,9 @@ def fn_softmax(input, params, hyper_params, backprop, dv_output=None):
 
     # TODO: FORWARD CODE
     #       Update output with values
-    output = exp_input / np.sum(exp_input)
+    for i in range(batch_size):
+        exp_input = np.exp(input[:,i])
+        output[:,i] = exp_input / np.sum(exp_input)
 
     if backprop:
         assert dv_output is not None
