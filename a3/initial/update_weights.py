@@ -18,8 +18,12 @@ def update_weights(model, grads, hyper_params):
     updated_model = model
 
     for i in range(num_layers):
-        updated_model['layers'][i]['params']['b'] += (-a*grads[i]['b'])
+        curr_bias = updated_model['layers'][i]['params']['b']
+        curr_bias += (-a*grads[i]['b'])
+        updated_model['layers'][i]['params']['b'] = curr_bias
+
         curr_weight = updated_model['layers'][i]['params']['W']
-        updated_model['layers'][i]['params']['W'] += (-a*grads[i]['W']) + (-lmd*curr_weight)
+        curr_weight += (-a*grads[i]['W']) + (-lmd*curr_weight)
+        updated_model['layers'][i]['params']['W'] = curr_weight
 
     return updated_model
