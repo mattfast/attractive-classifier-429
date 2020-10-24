@@ -33,21 +33,42 @@ def fn_conv(input, params, hyper_params, backprop, dv_output=None):
     grad = {'W': np.zeros(0),
             'b': np.zeros(0)}
 
+    print(dv_output.shape)
+
     for i in range(batch_size):
         for j in range(num_filters):
-            img = input[:,:,:,i]
-            filter = params['W'][:,:,:,j]
-            output[:,:,j,i] = scipy.signal.convolve(img, filter, mode='valid')
-            output[:,:,j,i] += params['b'][j, 1]
+            for k in range(filter_depth):
+                img = input[:,:,k,i]
+                filter = params['W'][:,:,k,j]
+                output[:,:,j,i] += scipy.signal.convolve(img, filter, mode='valid')
 
-
+            output[:,:,j,i] += params['b'][j, 0]
 
     if backprop:
         assert dv_output is not None
         dv_input = np.zeros(input.shape)
         grad['W'] = np.zeros(params['W'].shape)
         grad['b'] = np.zeros(params['b'].shape)
+
+        for i in range(batch_size):
+            for j in range(num_filters):
+                for k in range(filter_depth):
+                    flipped_img = np.flip(input[:,:,k,i],axis=(0,1))
+                    filter = dv_output[:,:,j,i]
+                    grad['W'][:,:,k,j] += scipy.signal.convolve(flipped_img, filter, mode='valid')
+
+        grad['W'] = grad['W'] / batch_size
+        grad['b'][:,0] = np.sum(dv_output, axis=(0,1,3)) / batch_size
+
+        for i in range(batch_size):
+            for j in range(num_filters):
+                for k in range(filter_depth):
+                    img = dv_output[:,:,j,i]
+                    filter = np.flip(params['W'][:,:,k,j],axis=(0,1))
+                    dv_input[:,:,k,i] += scipy.signal.convolve(img, filter, mode='full')
         
+
+            
         # TODO: BACKPROP CODE
         #       Update dv_input and grad with values
 
