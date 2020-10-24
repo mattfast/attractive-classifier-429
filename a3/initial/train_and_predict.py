@@ -39,14 +39,14 @@ def main():
                                 'num_out': 10}),
          init_layers('softmax', {})]
 
-    #model = init_model(l, [28, 28, 1], 10, True)
+    model = init_model(l, [28, 28, 1], 10, True)
 
 
     model = np.load('full_model_2.npz', allow_pickle=True)
     model = dict(model)
     params = {}
 
-    """
+
     model, loss = train(model, total_input_data, total_label_data, params, 350)
 
     plt.scatter(list(range(loss.shape[0])), loss)
@@ -54,7 +54,7 @@ def main():
     plt.xlabel('Num Iterations')
     plt.ylabel('Training Loss')
     plt.show()
-    plt.savefig('training_loss.png') """
+    plt.savefig('training_loss.png')
 
     test_output, _ = inference(model, test_data)
     max_test_values = np.argmax(test_output, axis=0)
