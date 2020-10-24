@@ -25,45 +25,36 @@ def main():
     total_input_data = np.concatenate((train_data, test_data), axis=3)
     total_label_data = np.concatenate((train_label, test_label))
 
-    l = [init_layers('conv', {'filter_size': 5,
+    l = [init_layers('conv', {'filter_size': 3,
                               'filter_depth': 1,
-                              'num_filters': 6}),
+                              'num_filters': 32}),
          init_layers('relu', {}),
          init_layers('pool', {'filter_size': 2,
                               'stride': 2}),
-         init_layers('conv', {'filter_size': 5,
-                              'filter_depth': 6,
-                              'num_filters': 16}),
-         init_layers('relu', {}),
-         init_layers('pool', {'filter_size': 2,
-                              'stride': 2}),
-         init_layers('conv', {'filter_size': 4,
-                              'filter_depth': 16,
-                              'num_filters': 120}),
-         init_layers('relu', {}),
          init_layers('flatten', {}),
-         init_layers('linear', {'num_in': 120,
-                                'num_out': 84}),
+         init_layers('linear', {'num_in': 5408,
+                                'num_out': 100}),
          init_layers('relu', {}),
-         init_layers('linear', {'num_in': 84,
+         init_layers('linear', {'num_in': 100,
                                 'num_out': 10}),
          init_layers('softmax', {})]
 
     #model = init_model(l, [28, 28, 1], 10, True)
 
-    model = np.load('full_model.npz', allow_pickle=True)
+
+    model = np.load('full_model_2.npz', allow_pickle=True)
     model = dict(model)
     params = {}
 
-    '''
-    model, loss = train(model, total_input_data, total_label_data, params, 200)
+    """
+    model, loss = train(model, total_input_data, total_label_data, params, 350)
 
     plt.scatter(list(range(loss.shape[0])), loss)
     plt.title('Cross-Entropy Training Loss over Iteration Counts')
     plt.xlabel('Num Iterations')
     plt.ylabel('Training Loss')
     plt.show()
-    plt.savefig('training_loss.png') '''
+    plt.savefig('training_loss.png') """
 
     test_output, _ = inference(model, test_data)
     max_test_values = np.argmax(test_output, axis=0)

@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 ######################################################
 # Set use_pcode to True to use the provided pyc code
 # for inference, calc_gradient, loss_crossentropy and update_weights
-use_pcode = True
+use_pcode = False
 
 # You can modify the imports of this section to indicate 
 # whether to use the provided pyc or your own code for each of the four functions.
@@ -43,14 +43,14 @@ def train(model, input, label, params, numIters):
     '''
     # Initialize training parameters
     # Learning rate
-    lr = params.get("learning_rate", .02)
+    lr = params.get("learning_rate", .01)
     # Weight decay
     wd = params.get("weight_decay", .0005)
     # Friction term
     rho = params.get("rho", .99)
     # Batch size
     batch_size = params.get("batch_size", 128)
-    plateau_iteration_cutoff = 50
+    plateau_iteration_cutoff = 35
     plateau_ratio_cutoff = 0.995
 
     # Input contains both train and test data. Split this up.
@@ -63,7 +63,7 @@ def train(model, input, label, params, numIters):
     # There is a good chance you will want to save your network model during/after
     # training. It is up to you where you save and how often you choose to back up
     # your model. By default the code saves the model in 'model.npz'.
-    save_file = params.get("save_file", 'full_model.npz')
+    save_file = params.get("save_file", 'full_model_2.npz')
     
     # update_params will be passed to your update_weights function.
     # This allows flexibility in case you want to implement extra features like momentum.
@@ -86,6 +86,7 @@ def train(model, input, label, params, numIters):
 
     curr_best_loss = -1
     num_iterations_since_best = 0
+    best_test_loss = -1
 
     for i in range(numIters):
 
@@ -113,12 +114,10 @@ def train(model, input, label, params, numIters):
             velocity[j] = new_velocity
 
         # Passing in velocity for gradient accomplishes the same update step for momentum
-        model = update_weights(model, curr_grads, update_params)
+        model = update_weights(model, velocity, update_params)
         print(f"Current training loss on {i}th iteration: {curr_loss}.")
         print(f"Current training accuracy on {i}th iteration: {train_accuracy}.")
 
-        lr = lr * 0.985
-        update_params['lr'] = lr
 
         # Calculate Test Loss on mini-Batch
         test_batch = np.random.choice(test_set.shape[-1], batch_size, replace=False)
@@ -134,7 +133,7 @@ def train(model, input, label, params, numIters):
         print(f"Current test loss on {i}th iteration: {curr_test_loss}.")
         print(f"Current test accuracy on {i}th iteration: {test_accuracy}.")
 
-        if test_accuracy > 0.98:
+        if curr_test_loss < 0.04:
             print("Saving model...")
             np.savez(save_file, **model)
             print("Model Saved.")
@@ -151,14 +150,23 @@ def train(model, input, label, params, numIters):
             curr_best_loss = curr_loss
             num_iterations_since_best = 0
 
-            print("Saving model...")
-            np.savez(save_file, **model)
-            print("Model Saved.")
+            if (curr_test_loss < best_test_loss) or (best_test_loss == -1):
+                best_test_loss = curr_test_loss
+                print("New local loss minimum achieved. Saving model...")
+                np.savez(save_file, **model)
+                print("Model Saved.")
+            else:
+                print("New local loss minimum achieved, but inconclusive to test results.")
         else:
             num_iterations_since_best += 1
 
-        if num_iterations_since_best > plateau_iteration_cutoff:
+        if num_iterations_since_best > 2*plateau_iteration_cutoff:
             break
+        elif num_iterations_since_best > 0 and num_iterations_since_best%plateau_iteration_cutoff == 0:
+            print("Learning Rate too high. Adjusting to drop by half")
+            lr = lr*0.5
+            update_params['lr'] = lr
+
 
         # Calculate and store Velocity
         # Steps:
