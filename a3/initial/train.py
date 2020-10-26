@@ -49,7 +49,7 @@ def train(model, input, label, params, numIters):
     # Friction term
     rho = params.get("rho", .99)
     # Batch size
-    batch_size = params.get("batch_size", 128)
+    batch_size = params.get("batch_size", 200)
     plateau_iteration_cutoff = 35
     plateau_ratio_cutoff = 0.995
 
