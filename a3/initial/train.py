@@ -49,9 +49,8 @@ def train(model, input, label, params, numIters):
     # Friction term
     rho = params.get("rho", .99)
     # Batch size
-    batch_size = params.get("batch_size", 200)
-    plateau_iteration_cutoff = 35
-    plateau_ratio_cutoff = 0.995
+    batch_size = params.get("batch_size", 128)
+    plateau_iteration_cutoff = 25
 
     # Input contains both train and test data. Split this up.
     train_set = input[..., :60000]
@@ -63,7 +62,7 @@ def train(model, input, label, params, numIters):
     # There is a good chance you will want to save your network model during/after
     # training. It is up to you where you save and how often you choose to back up
     # your model. By default the code saves the model in 'model.npz'.
-    save_file = params.get("save_file", 'full_model_2.npz')
+    save_file = params.get("save_file", 'depth_model_35_2.npz')
     
     # update_params will be passed to your update_weights function.
     # This allows flexibility in case you want to implement extra features like momentum.
@@ -133,20 +132,19 @@ def train(model, input, label, params, numIters):
         print(f"Current test loss on {i}th iteration: {curr_test_loss}.")
         print(f"Current test accuracy on {i}th iteration: {test_accuracy}.")
 
-        if curr_test_loss < 0.04:
+        if curr_test_loss < 0.02:
             print("Saving model...")
             np.savez(save_file, **model)
             print("Model Saved.")
             break
 
         plateau_ratio = 1
-
         if curr_best_loss == -1:
             plateau_ratio = 0
         elif curr_loss < curr_best_loss:
             plateau_ratio = curr_loss / curr_best_loss
 
-        if plateau_ratio < plateau_ratio_cutoff:
+        if curr_loss < curr_best_loss or curr_best_loss == -1:
             curr_best_loss = curr_loss
             num_iterations_since_best = 0
 
@@ -160,9 +158,7 @@ def train(model, input, label, params, numIters):
         else:
             num_iterations_since_best += 1
 
-        if num_iterations_since_best > 2*plateau_iteration_cutoff:
-            break
-        elif num_iterations_since_best > 0 and num_iterations_since_best%plateau_iteration_cutoff == 0:
+        if num_iterations_since_best > 0 and num_iterations_since_best%plateau_iteration_cutoff == 0:
             print("Learning Rate too high. Adjusting to drop by half")
             lr = lr*0.5
             update_params['lr'] = lr
