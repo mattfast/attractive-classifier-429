@@ -27,12 +27,12 @@ def main():
 
     l = [init_layers('conv', {'filter_size': 3,
                               'filter_depth': 1,
-                              'num_filters': 32}),
+                              'num_filters': 35}),
          init_layers('relu', {}),
          init_layers('pool', {'filter_size': 2,
                               'stride': 2}),
          init_layers('flatten', {}),
-         init_layers('linear', {'num_in': 5408,
+         init_layers('linear', {'num_in': 5915,
                                 'num_out': 100}),
          init_layers('relu', {}),
          init_layers('linear', {'num_in': 100,
@@ -42,12 +42,12 @@ def main():
     model = init_model(l, [28, 28, 1], 10, True)
 
 
-    model = np.load('full_model_2.npz', allow_pickle=True)
-    model = dict(model)
+    #model = np.load('depth_model_35_2.npz', allow_pickle=True)
+    #model = dict(model)
     params = {}
 
 
-    model, loss = train(model, total_input_data, total_label_data, params, 350)
+    model, loss = train(model, total_input_data, total_label_data, params, 450)
 
     plt.scatter(list(range(loss.shape[0])), loss)
     plt.title('Cross-Entropy Training Loss over Iteration Counts')
