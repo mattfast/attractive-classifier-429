@@ -138,12 +138,6 @@ def train(model, input, label, params, numIters):
             print("Model Saved.")
             break
 
-        plateau_ratio = 1
-        if curr_best_loss == -1:
-            plateau_ratio = 0
-        elif curr_loss < curr_best_loss:
-            plateau_ratio = curr_loss / curr_best_loss
-
         if curr_loss < curr_best_loss or curr_best_loss == -1:
             curr_best_loss = curr_loss
             num_iterations_since_best = 0
