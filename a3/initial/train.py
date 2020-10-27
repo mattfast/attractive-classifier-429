@@ -132,7 +132,7 @@ def train(model, input, label, params, numIters):
         print(f"Current test loss on {i}th iteration: {curr_test_loss}.")
         print(f"Current test accuracy on {i}th iteration: {test_accuracy}.")
 
-        if curr_test_loss < 0.02:
+        if curr_loss < 0.02:
             print("Saving model...")
             np.savez(save_file, **model)
             print("Model Saved.")
