@@ -50,7 +50,7 @@ def train(model, input, label, params, numIters):
     rho = params.get("rho", .99)
     # Batch size
     batch_size = params.get("batch_size", 128)
-    plateau_iteration_cutoff = 25
+    plateau_iteration_cutoff = 30
 
     # Input contains both train and test data. Split this up.
     train_set = input[..., :60000]
@@ -62,7 +62,7 @@ def train(model, input, label, params, numIters):
     # There is a good chance you will want to save your network model during/after
     # training. It is up to you where you save and how often you choose to back up
     # your model. By default the code saves the model in 'model.npz'.
-    save_file = params.get("save_file", 'depth_model_35_2.npz')
+    save_file = params.get("save_file", 'depth_model_35.npz')
     
     # update_params will be passed to your update_weights function.
     # This allows flexibility in case you want to implement extra features like momentum.
@@ -85,7 +85,6 @@ def train(model, input, label, params, numIters):
 
     curr_best_loss = -1
     num_iterations_since_best = 0
-    best_test_loss = -1
 
     for i in range(numIters):
 
@@ -133,6 +132,7 @@ def train(model, input, label, params, numIters):
         print(f"Current test accuracy on {i}th iteration: {test_accuracy}.")
 
         if curr_loss < 0.02:
+            curr_best_loss = curr_loss
             print("Saving model...")
             np.savez(save_file, **model)
             print("Model Saved.")
@@ -142,13 +142,9 @@ def train(model, input, label, params, numIters):
             curr_best_loss = curr_loss
             num_iterations_since_best = 0
 
-            if (curr_test_loss < best_test_loss) or (best_test_loss == -1):
-                best_test_loss = curr_test_loss
-                print("New local loss minimum achieved. Saving model...")
-                np.savez(save_file, **model)
-                print("Model Saved.")
-            else:
-                print("New local loss minimum achieved, but inconclusive to test results.")
+            print("New local loss minimum achieved. Saving model...")
+            np.savez(save_file, **model)
+            print("Model Saved.")
         else:
             num_iterations_since_best += 1
 
@@ -168,6 +164,10 @@ def train(model, input, label, params, numIters):
         # Optionally,
         #   (1) Monitor the progress of training
         #   (2) Save your learnt model, using ``np.savez(save_file, **model)``
+
+    if curr_best_loss > 0.2:
+        print("Saving final model")
+        np.savez(save_file, **model)
 
     plt.scatter(list(range(test_loss.shape[0])), test_loss)
     plt.title('Cross-Entropy Test Loss over Iteration Counts')

@@ -42,12 +42,12 @@ def main():
     model = init_model(l, [28, 28, 1], 10, True)
 
 
-    #model = np.load('depth_model_35_2.npz', allow_pickle=True)
+    #model = np.load('depth_model_35.npz', allow_pickle=True)
     #model = dict(model)
     params = {}
 
 
-    model, loss = train(model, total_input_data, total_label_data, params, 450)
+    model, loss = train(model, total_input_data, total_label_data, params, 460)
 
     plt.scatter(list(range(loss.shape[0])), loss)
     plt.title('Cross-Entropy Training Loss over Iteration Counts')
