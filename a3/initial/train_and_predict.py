@@ -4,7 +4,6 @@ import numpy as np
 from init_layers import init_layers
 from init_model import init_model
 from inference import inference
-from loss_euclidean import loss_euclidean
 
 sys.path += ['../data']
 
