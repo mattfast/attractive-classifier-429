@@ -25,6 +25,8 @@ def fn_conv(input, params, hyper_params, backprop, dv_output=None):
     out_height = in_height - params['W'].shape[0] + 1
     out_width = in_width - params['W'].shape[1] + 1
 
+    dropout_rate = hyper_params['dropout_rate']
+
     assert params['W'].shape[2] == input.shape[2], 'Filter depth does not match number of input channels'
 
     # Initialize
@@ -33,7 +35,7 @@ def fn_conv(input, params, hyper_params, backprop, dv_output=None):
     grad = {'W': np.zeros(0),
             'b': np.zeros(0)}
 
-    print(dv_output.shape)
+    # print(dv_output.shape)
 
     for i in range(batch_size):
         for j in range(num_filters):
@@ -43,6 +45,10 @@ def fn_conv(input, params, hyper_params, backprop, dv_output=None):
                 output[:,:,j,i] += scipy.signal.convolve(img, filter, mode='valid')
 
             output[:,:,j,i] += params['b'][j, 0]
+
+    dropout_choices = np.random.binomial(1, dropout_rate, size=output.shape)
+    output *= dropout_choices
+    print("did dropout with rate " + str(dropout_rate))
 
     if backprop:
         assert dv_output is not None
