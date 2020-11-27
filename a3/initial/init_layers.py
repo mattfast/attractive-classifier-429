@@ -7,7 +7,7 @@ from fn_pool import fn_pool
 
 ######################################################
 # Set use_pcode to True to use the provided pyc code for layer functions
-use_pcode = True
+use_pcode = False
 
 # You can modify the imports of this section to indicate
 # whether to use the provided pyc or your own code for each of the four functions.

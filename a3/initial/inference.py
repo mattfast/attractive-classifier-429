@@ -1,6 +1,6 @@
 import numpy as np
 
-def inference(model, input):
+def inference(model, input, test_step=False):
     """
     Do forward propagation through the network to get the activation
     at each layer, and the final output
@@ -17,9 +17,19 @@ def inference(model, input):
 
     for i in range(num_layers):
         curr_layer = model['layers'][i]
+
+        if 'dropout_rate' in curr_layer['hyper_params']:
+            temp = curr_layer['hyper_params']['dropout_rate']
+            if test_step:
+                curr_layer['hyper_params']['dropout_rate'] = 1.0
+
         activations[i], _, _ = curr_layer['fwd_fn'](input, curr_layer['params'], curr_layer['hyper_params'],
                                                     backprop=False)
         input = activations[i]
+
+        if 'dropout_rate' in curr_layer['hyper_params']:
+            curr_layer['hyper_params']['dropout_rate'] = temp
+
 
     output = activations[-1]
     return output, activations

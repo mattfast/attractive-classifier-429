@@ -122,7 +122,7 @@ def train(model, input, label, params, numIters):
         test_inputs = test_set[..., test_batch]
         test_labels = test_label[test_batch].astype('int')
 
-        test_output, _ = inference(model, test_inputs)
+        test_output, _ = inference(model, test_inputs, test_step=True)
         curr_test_loss, _ = loss_crossentropy(test_output, test_labels, hyper_params=None, backprop=True)
 
         max_test_values = np.argmax(test_output, axis=0)

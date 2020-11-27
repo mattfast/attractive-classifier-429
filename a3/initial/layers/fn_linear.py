@@ -23,6 +23,7 @@ def fn_linear(input, params, hyper_params, backprop, dv_output=None):
 
     W = params['W']
     b = params['b']
+    dropout_rate = hyper_params['dropout_rate']
 
     num_in, batch_size = input.shape
     if num_in != hyper_params['num_in']:
@@ -38,6 +39,10 @@ def fn_linear(input, params, hyper_params, backprop, dv_output=None):
     # TODO: FORWARD CODE
     #       Update output with values
     output = W @ input + b
+
+    dropout_choices = np.random.binomial(1, dropout_rate, size=output.shape)
+    output *= dropout_choices
+    print("did dropout with rate " + str(dropout_rate))
 
 
     if backprop:
