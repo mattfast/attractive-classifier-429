@@ -1,5 +1,6 @@
 import os
 import cv2
+import numpy as np
 from functools import cmp_to_key
 
 def str_cmp(stra, strb):
@@ -56,16 +57,8 @@ def load_LFW_images(filepath):
 	all_files = sorted(all_files, key=cmp_to_key(str_cmp))
 	all_files = [f[0] for f in all_files]
 	all_files = [cv2.imread(f) for f in all_files]
+	all_files = [image / 255 for image in all_files]
 	return all_files
-
-"""
-res = load_LFW_images('../lfw/')
-
-cv2.imshow('image', res[1])
-
-cv2.waitKey(0)
-
-cv2.destroyAllWindows()"""
 
 
 
