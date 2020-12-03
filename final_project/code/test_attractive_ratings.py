@@ -19,9 +19,6 @@ def cmp(a, b):
         return -1
 
 
-"""
-model_name = '../larger_model'
-
 img_files = []
 for path, subdirs, files in os.walk('../fairface_val'):
     for name in files:
@@ -34,15 +31,20 @@ img_files = [f[0] for f in img_files]
 img_files = [cv2.imread(f) for f in img_files]
 img_files = [cv2.resize(f, dsize=(250, 250)) for f in img_files]
 img_files = [image / 255 for image in img_files]
-img_files = np.array(img_files)"""
+img_files = np.array(img_files)
+
+"""test_indices = np.loadtxt('../test_values.csv', delimiter=',')
+test_indices = test_indices.astype(np.int64)
 
 img_files = load_LFW_images('../lfw')
 img_files = np.array(img_files)
+img_files = img_files[test_indices]"""
 
-m = models.load_model('../larger_model')
+
+m = models.load_model('../non_binary_dropout_model')
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 print('Finished Model Loading')
 
 predictions = m.predict(img_files)
-np.savetxt('../lfw_non_binary_trained_continuous_predictions.csv', predictions, delimiter=',')
+np.savetxt('../fair_face_non_binary_trained_continuous_predictions.csv', predictions, delimiter=',')
 
