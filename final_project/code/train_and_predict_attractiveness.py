@@ -11,40 +11,29 @@ CUTOFF = 0
 NUM_FOLDS = 4
 LOSS_FUNC = 'binary_crossentropy'
 BATCH_SIZE = 125
-NUM_EPOCHS = 15
+NUM_EPOCHS = 25
 
 # Images are of size (250, 250, 3)
 images = load_LFW_images('../lfw/')
-male_images = []
-female_images = []
 print("Finished loading images")
 
 attr = load_LFW_attributes('../lfw_attributes.txt')
 print("Finished loading attributes")
 
-male_y = []
-female_y = []
+y = []
 for index, person in enumerate(attr):
     if person['Male'] > 0:
-        male_images.append(images[index])
-        if person['Attractive Man'] > CUTOFF:
-            male_y.append(1)
-        else:
-            male_y.append(0)
+        y.append(person['Attractive Man'])
     else:
-        female_images.append(images[index])
-        if person['Attractive Woman'] > CUTOFF:
-            female_y.append(1)
-        else:
-            female_y.append(0)
+        y.append(person['Attractive Woman'])
 
 print("Finished separating gender images")
-male_images = np.array(male_images)
-female_images = np.array(female_images)
+images = np.array(images)
 
-encoder = LabelEncoder()
-encoder.fit(male_y)
-male_targets = encoder.transform(male_y)
+#encoder = LabelEncoder()
+#encoder.fit(y)
+#targets = encoder.transform(y)
+targets = y
 print('Finished Transforming Variables')
 
 kfold = KFold(n_splits=NUM_FOLDS, shuffle=True)
@@ -59,17 +48,21 @@ loss = []
 
 # CNN Architecture from:
 # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7014093/
-for train, test in kfold.split(male_images, male_targets):
+for train, test in kfold.split(images, targets):
     model = models.Sequential()
     model.add(layers.Conv2D(96, (5, 5), strides=(2, 2), activation='relu', input_shape=input_shape))
     model.add(layers.MaxPool2D(2, 2))
     model.add(layers.Conv2D(256, (5, 5), strides=(2, 2), activation='relu', input_shape=input_shape))
     model.add(layers.MaxPool2D(2, 2))
+    model.add(layers.Dropout(0.2))
     model.add(layers.Conv2D(512, (5, 5), strides=(2, 2), activation='relu', input_shape=input_shape))
     model.add(layers.MaxPool2D(2, 2))
     model.add(layers.Flatten())
-    model.add(layers.Dense(64, activation='relu'))
-    model.add(layers.Dense(1, activation='sigmoid'))
+    model.add(layers.Dropout(0.2))
+    model.add(layers.Dense(65, activation='relu'))
+    model.add(layers.Dropout(0.2))
+    model.add(layers.Dense(1, activation='linear'))
+    model.summary()
 
     model.compile(loss=LOSS_FUNC, optimizer='adam', metrics=['accuracy'])
 
@@ -77,18 +70,18 @@ for train, test in kfold.split(male_images, male_targets):
     print(f'Training for fold {fold_no} ...')
 
     # Fit data to model
-    history = model.fit(male_images[train], male_targets[train],
+    history = model.fit(images[train], targets[train],
               batch_size=BATCH_SIZE,
               epochs=NUM_EPOCHS,
               verbose=1)
 
     # Generate generalization metrics
-    scores = model.evaluate(male_images[test], male_targets[test], verbose=1)
+    scores = model.evaluate(images[test], targets[test], verbose=1)
     print(
         f'Score for fold {fold_no}: {model.metrics_names[0]} of {scores[0]}; {model.metrics_names[1]} of {scores[1] * 100}%')
     if scores[1] * 100 > best_acc:
         best_acc = scores[1]*100
-        model.save("../male_larger_model")
+        model.save("../non_binary_dropout_model")
 
     accuracy.append(scores[1] * 100)
     loss.append(scores[0])
