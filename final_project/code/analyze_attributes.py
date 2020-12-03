@@ -28,7 +28,7 @@ def main():
 	print(f"Slope: {m}, R^2: {r_val**2}, P: {p_val}")
 
 	#plt.axline((0, b), slope=m, color="black")
-	#plt.scatter(white_scores_men, attractive_scores_men, color='b')
+	plt.scatter(white_scores_men, attractive_scores_men, color='b')
 	plt.scatter(white_scores_men, prediction_scores, color='r')
 	plt.title("White Score vs Attractive Score - Men")
 	plt.xlabel("White Score")
@@ -40,7 +40,7 @@ def main():
 	print(f"Slope: {m}, R^2: {r_val**2}, P: {p_val}")
 
 	#plt.axline((0, b), slope=m, color="black")
-	#plt.scatter(asian_scores_men, attractive_scores_men)
+	plt.scatter(asian_scores_men, attractive_scores_men)
 	plt.scatter(asian_scores_men, prediction_scores, color='r')
 	plt.title("Asian Score vs Attractive Score - Men")
 	plt.xlabel("Asian Score")
@@ -52,7 +52,7 @@ def main():
 	print(f"Slope: {m}, R^2: {r_val**2}, P: {p_val}")
 
 	#plt.axline((0, b), slope=m, color="black")
-	#plt.scatter(black_scores_men, attractive_scores_men)
+	plt.scatter(black_scores_men, attractive_scores_men)
 	plt.scatter(black_scores_men, prediction_scores, color='r')
 	plt.title("Black Score vs Attractive Score - Men")
 	plt.xlabel("Black Score")
