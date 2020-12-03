@@ -9,7 +9,7 @@ from load_LFW_attributes import load_LFW_attributes, load_LFW_images
 
 CUTOFF = 0
 NUM_FOLDS = 4
-LOSS_FUNC = 'binary_crossentropy'
+LOSS_FUNC = 'mean_squared_error'
 BATCH_SIZE = 125
 NUM_EPOCHS = 25
 
@@ -33,7 +33,7 @@ images = np.array(images)
 #encoder = LabelEncoder()
 #encoder.fit(y)
 #targets = encoder.transform(y)
-targets = y
+targets = np.array(y)
 print('Finished Transforming Variables')
 
 kfold = KFold(n_splits=NUM_FOLDS, shuffle=True)
@@ -48,7 +48,7 @@ loss = []
 
 # CNN Architecture from:
 # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7014093/
-for train, test in kfold.split(images, targets):
+for train, test in kfold.split(images, y=targets):
     np.savetxt('../test_values.csv', test, delimiter=',')
     model = models.Sequential()
     model.add(layers.Conv2D(96, (5, 5), strides=(2, 2), activation='relu', input_shape=input_shape))
@@ -62,7 +62,7 @@ for train, test in kfold.split(images, targets):
     model.add(layers.Dense(1, activation='linear'))
     model.summary()
 
-    model.compile(loss=LOSS_FUNC, optimizer='adam', metrics=['accuracy'])
+    model.compile(loss=LOSS_FUNC, optimizer='adam', metrics=['mean_squared_error'])
 
     print('------------------------------------------------------------------------')
     print(f'Training for fold {fold_no} ...')
