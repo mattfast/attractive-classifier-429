@@ -49,16 +49,14 @@ loss = []
 # CNN Architecture from:
 # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7014093/
 for train, test in kfold.split(images, targets):
+    np.savetxt('../test_values.csv', test, delimiter=',')
     model = models.Sequential()
     model.add(layers.Conv2D(96, (5, 5), strides=(2, 2), activation='relu', input_shape=input_shape))
     model.add(layers.MaxPool2D(2, 2))
     model.add(layers.Conv2D(256, (5, 5), strides=(2, 2), activation='relu', input_shape=input_shape))
     model.add(layers.MaxPool2D(2, 2))
     model.add(layers.Dropout(0.2))
-    model.add(layers.Conv2D(512, (5, 5), strides=(2, 2), activation='relu', input_shape=input_shape))
-    model.add(layers.MaxPool2D(2, 2))
     model.add(layers.Flatten())
-    model.add(layers.Dropout(0.2))
     model.add(layers.Dense(65, activation='relu'))
     model.add(layers.Dropout(0.2))
     model.add(layers.Dense(1, activation='linear'))
