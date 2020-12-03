@@ -15,6 +15,9 @@ NUM_EPOCHS = 25
 
 # Images are of size (250, 250, 3)
 images = load_LFW_images('../lfw/')
+
+# Images are of size (250, 250, 3)
+images = load_LFW_images('../lfw/')
 print("Finished loading images")
 
 attr = load_LFW_attributes('../lfw_attributes.txt')
@@ -34,6 +37,8 @@ images = np.array(images)
 #encoder.fit(y)
 #targets = encoder.transform(y)
 targets = np.array(y)
+
+
 print('Finished Transforming Variables')
 
 kfold = KFold(n_splits=NUM_FOLDS, shuffle=True)
@@ -50,6 +55,7 @@ loss = []
 # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7014093/
 for train, test in kfold.split(images, y=targets):
     np.savetxt('../test_values.csv', test, delimiter=',')
+
     model = models.Sequential()
     model.add(layers.Conv2D(96, (5, 5), strides=(2, 2), activation='relu', input_shape=input_shape))
     model.add(layers.MaxPool2D(2, 2))
@@ -57,7 +63,7 @@ for train, test in kfold.split(images, y=targets):
     model.add(layers.MaxPool2D(2, 2))
     model.add(layers.Dropout(0.2))
     model.add(layers.Flatten())
-    model.add(layers.Dense(65, activation='relu'))
+    model.add(layers.Dense(64, activation='relu'))
     model.add(layers.Dropout(0.2))
     model.add(layers.Dense(1, activation='linear'))
     model.summary()

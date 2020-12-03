@@ -19,7 +19,10 @@ def cmp(a, b):
         return -1
 
 
-"""img_files = []
+"""
+model_name = '../larger_model'
+
+img_files = []
 for path, subdirs, files in os.walk('../fairface_val'):
     for name in files:
         if 'jpg' not in name:
