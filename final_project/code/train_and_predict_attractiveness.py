@@ -47,7 +47,7 @@ fold_no = 1
 
 print('Starting model training')
 
-best_acc = 0
+best_score = 1000
 accuracy = []
 loss = []
 
@@ -82,12 +82,12 @@ for train, test in kfold.split(images, y=targets):
     # Generate generalization metrics
     scores = model.evaluate(images[test], targets[test], verbose=1)
     print(
-        f'Score for fold {fold_no}: {model.metrics_names[0]} of {scores[0]}; {model.metrics_names[1]} of {scores[1] * 100}%')
-    if scores[1] * 100 > best_acc:
-        best_acc = scores[1]*100
+        f'Score for fold {fold_no}: {model.metrics_names[0]} of {scores[0]}; {model.metrics_names[1]} of {scores[1]}%')
+    if scores[1] < best_score:
+        best_score = scores[1]
         model.save("../non_binary_dropout_model")
 
-    accuracy.append(scores[1] * 100)
+    accuracy.append(scores[1])
     loss.append(scores[0])
 
     fold_no += 1
