@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
-from tensorflow.keras import datasets, layers, models
+from tensorflow.keras import constraints, layers, models
+from tensorflow.keras.constraints import max_norm
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from sklearn.model_selection import KFold
@@ -11,7 +12,7 @@ CUTOFF = 0
 NUM_FOLDS = 4
 LOSS_FUNC = 'mean_squared_error'
 BATCH_SIZE = 125
-NUM_EPOCHS = 25
+NUM_EPOCHS = 15
 
 # Images are of size (250, 250, 3)
 images = load_LFW_images('../lfw/')
@@ -54,7 +55,8 @@ loss = []
 # CNN Architecture from:
 # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7014093/
 for train, test in kfold.split(images, y=targets):
-    np.savetxt('../test_values.csv', test, delimiter=',')
+    if fold_no == 1:
+        np.savetxt('../test_values.csv', test, delimiter=',')
 
     model = models.Sequential()
     model.add(layers.Conv2D(96, (5, 5), strides=(2, 2), activation='relu', input_shape=input_shape))
@@ -62,8 +64,11 @@ for train, test in kfold.split(images, y=targets):
     model.add(layers.Conv2D(256, (5, 5), strides=(2, 2), activation='relu', input_shape=input_shape))
     model.add(layers.MaxPool2D(2, 2))
     model.add(layers.Dropout(0.2))
+    model.add(layers.Conv2D(512, (5, 5), strides=(2, 2), activation='relu', input_shape=input_shape))
+    model.add(layers.MaxPool2D(2, 2))
+    model.add(layers.Dropout(0.2))
     model.add(layers.Flatten())
-    model.add(layers.Dense(64, activation='relu'))
+    model.add(layers.Dense(64, activation='relu', kernel_constraint=max_norm(10)))
     model.add(layers.Dropout(0.2))
     model.add(layers.Dense(1, activation='linear'))
     model.summary()

@@ -6,10 +6,12 @@ import numpy as np
 def main():
 
 	attributes = load_LFW_attributes("../lfw_attributes.txt")
+	attributes = np.array(attributes)
 	predictions = np.loadtxt('../lfw_non_binary_trained_continuous_predictions.csv', delimiter=',')
 	test_indices = np.loadtxt('../test_values.csv', delimiter=',')
 	test_indices = test_indices.astype(np.int64)
 	attributes = attributes[test_indices]
+	attributes = attributes.tolist()
 
 	white_scores_men, asian_scores_men, black_scores_men, attractive_scores_men = ([] for i in range(4))
 	prediction_scores = []
